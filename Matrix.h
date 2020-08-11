@@ -17,6 +17,7 @@ template<typename T>
     Matrix(){
         _numRows = 0;
         _numCols = 0;
+        
     }
 
     bool operator==(const Matrix& other) const{
@@ -112,55 +113,71 @@ template<typename T>
 
     //return the determinant of a matrix
     double det(){
-      if (_numCols != _numCols)
+      if (_numCols != _numRows)
         throw std::invalid_argument("Cannot find the determinant of a non-square matrix.");
-      
-      double intermediate1=1;
-      double intermediate2=1;
-      double result;
-
-      for(int i=0; i<_numCols; i++){
-        intermediate1 *= _matrix[i][i];
-      }
-
-      for(int j=0; j<_numCols; j++){
-        intermediate2 *= _matrix[j][_numCols-j-1];
-      }
-      result = intermediate1-intermediate2;
-      return result;
+      return _det(_matrix);
     }
-    //return the inverse of a matrix
-    // Matrix<T> Inverse(){
-    //    Matrix<T>product(_numRows, _numCols);
-    //   double determinant = _matrix.det();
-    //   if (determinant == 0 || _numCols != _numRows)
-    //     throw std::invalid_argument("Matrix is not invertible.");
 
-    //   if(_numCols == 2){
-    //     product(0,0) = _matrix[1][1]/determinant;
-    //     product(1,0) = -1*_matrix[1][0]/determinant;
-    //     product(0,1) = -1*_matrix[0][1]/determinant;
-    //     product(1,1) = _matrix[0][0]/determinant;
-    //   }
-    //   else{
-    //     for(i = 0; i < _numCols; i++){
-    //       for(j = 0; j < _numRows; j++){
-    //         double intermediate1 = 1;
-    //         double intermediate2 = 1;
-    //         for(int k=1; k<_numCols; k++){
-    //           intermediate1 *= _matrix[(i+k)%_numRows][(j+k)%_numCols];
-    //           intermediate2 *= _matrix[(i+((k+1)%(_numCols-1))+1)%_numCols][(j+((k+2)%(_numCols-1))+1)%_numCols];
-    //           /*((mat[(j+1)%3][(i+1)%3] * mat[(j+2)%3][(i+2)%3]) - (mat[(j+1)%3][(i+2)%3] * mat[(j+2)%3][(i+1)%3]))/ determinant<<"\t";*/
-    //         if((i+j)%2==0)
-    //           product(i,j) = (intermediate1-intermediate2)/determinant;
-    //         else
-    //           product(i,j) = -1*(intermediate1-intermediate2)/determinant;
-    //         }
-    //       }
-    //   }
-      
-    // }
-    // }
+private:
+    //recursive helper function for det()
+    double _det(std::vector<std::vector<double>> m){
+        //det of 2x2 matrix is ad-bc
+        if (m.size() == 2 && m[0].size() == 2)
+            return m[0][0]*m[1][1] - m[0][1]*m[1][0];
+
+        double det = 0;
+        for (int k = 0; k < m.size(); k++){
+
+            //create new submatrix to calculate minor for m[0][k]
+            std::vector<std::vector<double>> subM(m.size() -1, std::vector<double> (m.size() - 1));
+            int subi = 0, subj = 0;
+            for (int i = 1; i < m.size(); i++){
+                for (int j = 0; j < m.size(); j++){
+                    if (j != k){
+                        subM[subi][subj] = m[i][j];
+                        subj++;
+                    }
+                }
+                subj = 0;
+                subi++;
+            }
+            det += k % 2 == 0 ? m[0][k]*_det(subM) : -m[0][k]*_det(subM);
+        }
+        return det;
+    }
+
+ public:
+//     //return the inverse of a matrix
+//      Matrix<T> Inverse(){
+//        Matrix<T>product(_numRows, _numCols);
+//        double determinant = det();
+//        if (determinant == 0 || _numCols != _numRows)
+//          throw std::invalid_argument("Matrix is not invertible.");
+
+//        if(_numCols == 2){
+//          product(0,0) = _matrix[1][1]/determinant;
+//          product(1,0) = -1*_matrix[1][0]/determinant;
+//          product(0,1) = -1*_matrix[0][1]/determinant;
+//          product(1,1) = _matrix[0][0]/determinant;
+//        }
+//        else{
+//          for(int i = 0; i < _numCols; i++){
+//            for(int j = 0; j < _numRows; j++){
+//              double intermediate1 = 1;
+//              double intermediate2 = 1;
+//              for(int k=1; k<_numCols; k++){
+//                intermediate1 *= _matrix[(i+k)%_numRows][(j+k)%_numCols];
+//                intermediate2 *= _matrix[(i+((k+1)%(_numCols-1))+1)%_numCols][(j+((k+2)%(_numCols-1))+1)%_numCols];
+//              if((i+j)%2==0)
+//                product(i,j) = (intermediate1-intermediate2)/determinant;
+//              else
+//                product(i,j) = -1*(intermediate1-intermediate2)/determinant;
+//           }
+//          }
+//         }
+//        }
+//        return product;
+//      }
     /**
       Returns the sum of two matrices, throws error if matrices are of different dimensions.
     */

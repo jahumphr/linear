@@ -21,15 +21,21 @@ Matrix<int> randomMatrix(int row, int col){
 
 int main(){
 
-  vector<double> one{0, 2, 2, -1, 6, 4};
-    vector<double> two{0, 4, 4, 1, 10, 13};
-    vector<double> three{0, 8, 8, -1, 26, 23};
+  
+
+  vector<double> one{-5, 0, -1};
+  vector<double> two{1, 2, -1};
+  vector<double> three{-3, 4, 1};
+  // vector<double> one{0, 2, 2, -1, 6, 4};
+  //   vector<double> two{0, 4, 4, 1, 10, 13};
+  //   vector<double> three{0, 8, 8, -1, 26, 23};
 
     Matrix<double> matrix;
     matrix.insertRow(one);
     matrix.insertRow(two);
     matrix.insertRow(three);
 
+    cout << matrix.det() << endl;
     matrix.display();
     cout << endl;
 
@@ -52,10 +58,12 @@ int main(){
   // Matrix<int> test(2,3);
   // cout << test.sizeOf() << endl;
   // test.at(99,999) = 5;
-  // Matrix<int> matrix1 = randomMatrix(3, 3);
-  // cout << "m1" << endl;
-  // matrix1.display();
-  // cout << endl;
+   
+
+// Matrix<int> matrix1 = randomMatrix(3, 4);
+//    cout << "m1" << endl;
+//    matrix1.display();
+//    cout << endl;
 
   //makes system pause for a second before randomizing next matrix, ensuring time seed changes from matrix 1 to matrix 2
   /*
@@ -71,10 +79,8 @@ int main(){
 
   result.display();
 */
-  // Matrix<int> prod = matrix1.Inverse();
-  // prod.display();
-
-
+  //  Matrix<int> prod = matrix1.Inverse();
+  //  prod.display();
 
   return 0;
 
