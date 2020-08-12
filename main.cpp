@@ -23,19 +23,22 @@ int main(){
 
   
 
-  vector<double> one{-5, 0, -1};
-  vector<double> two{1, 2, -1};
-  vector<double> three{-3, 4, 1};
+  // vector<double> one{3, 2, 0, 1};
+  //   vector<double> two{4, 0, 1, 2};
+  //   vector<double> three{3, 0, 2, 1};
+  //   vector<double> four{9, 2, 3, 1};
   // vector<double> one{0, 2, 2, -1, 6, 4};
   //   vector<double> two{0, 4, 4, 1, 10, 13};
   //   vector<double> three{0, 8, 8, -1, 26, 23};
 
     Matrix<double> matrix;
-    matrix.insertRow(one);
-    matrix.insertRow(two);
-    matrix.insertRow(three);
+    matrix ="1 -2 3 1 2, 1 1 4 -1 3, 2 5 9 -2 8";
+    // matrix.insertRow(one);
+    // matrix.insertRow(two);
+    // matrix.insertRow(three);
+    // matrix.insertRow(four);
 
-    cout << matrix.det() << endl;
+    //cout << matrix.det() << endl;
     matrix.display();
     cout << endl;
 

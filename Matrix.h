@@ -32,6 +32,35 @@ template<typename T>
       return true;
     }
 
+    void operator=(std::string s){
+        _matrix.push_back(std::vector<double>(0));
+        std::string s2double = "";
+        int row = 0;
+        for (int i = 0; i < s.length(); ++i){
+            if (s[i] == ' '){
+                _matrix[row].push_back(std::stod(s2double));
+                s2double = "";
+            }
+            else if (s[i] == ','){
+                _matrix[row].push_back(std::stod(s2double));
+                //if one of the rows has a different # of columns compared to row above, not a valid matrix
+                if (row > 0 && _matrix[row].size() != _matrix[row - 1].size()){
+                    throw std::invalid_argument( "Number of columns don't match." );
+                }
+                _matrix.push_back(std::vector<double>(0));
+                row++;
+                s2double = "";
+                if (s[i+1] == ' ')
+                    i++;
+            }
+            else
+                s2double += s[i];
+        }
+        _matrix[row].push_back(std::stod(s2double));
+        _numRows = _matrix.size();
+        _numCols = _matrix[0].size();
+    }
+
     T& at(const int row, const int col){
       if (row < 0 || row >= _numRows)
         throw std::invalid_argument( "Invalid row number" );
