@@ -32,7 +32,8 @@ int main(){
   //   vector<double> three{0, 8, 8, -1, 26, 23};
 
     Matrix<double> matrix;
-    matrix ="1 -2 3 1 2, 1 1 4 -1 3, 2 5 9 -2 8";
+    matrix ="1 2 3, 2 3 4, 3 4 4";
+    Matrix<double> result;
     // matrix.insertRow(one);
     // matrix.insertRow(two);
     // matrix.insertRow(three);
@@ -41,11 +42,9 @@ int main(){
     //cout << matrix.det() << endl;
     matrix.display();
     cout << endl;
+    result = matrix.Inverse();
+    result.display();
 
-    matrix.rref();
-
-    matrix.display();
-    cout << endl;
     
   // Matrix<int> test = randomMatrix(2,3);
   // Matrix<int> test2 = randomMatrix(3,1);

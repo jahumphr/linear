@@ -110,6 +110,13 @@ template<typename T>
   //      }
     }
 
+    Matrix<T> identity(int size){
+      Matrix<T> product(size, size);
+      for (int i=0; i<size; i++){
+        product(i,i) = 1;
+      }
+      return product;
+    }
     //insert column at position. If no position entered, inserts as last column.
     //Worst case runtime is quadratic here.
     void insertCol(std::vector<T> newCol, int pos = -1){
@@ -147,6 +154,8 @@ template<typename T>
       return _det(_matrix);
     }
 
+
+
 private:
     //recursive helper function for det()
     double _det(std::vector<std::vector<double>> m){
@@ -176,20 +185,47 @@ private:
     }
 
  public:
-//     //return the inverse of a matrix
-//      Matrix<T> Inverse(){
-//        Matrix<T>product(_numRows, _numCols);
-//        double determinant = det();
-//        if (determinant == 0 || _numCols != _numRows)
-//          throw std::invalid_argument("Matrix is not invertible.");
 
-//        if(_numCols == 2){
-//          product(0,0) = _matrix[1][1]/determinant;
-//          product(1,0) = -1*_matrix[1][0]/determinant;
-//          product(0,1) = -1*_matrix[0][1]/determinant;
-//          product(1,1) = _matrix[0][0]/determinant;
-//        }
-//        else{
+      Matrix<double> combinerows(const Matrix& other){
+        Matrix<double>product(_numRows,_numCols+other._numCols);
+        for(int i=0; i<_numRows; i++){
+          for(int j=0; j<_numCols; j++){
+            product(i,j) = _matrix[i][j];
+          }
+        }
+        for(int i=0; i<other._numRows; i++){
+          for(int j=0; j<other._numCols; j++){
+            product(i,_numCols+j) = other._matrix[i][j];
+          }
+        }
+        return product;
+      }
+
+     //return the inverse of a matrix
+      Matrix<double> Inverse(){
+        Matrix<double>product(_numRows, _numCols);
+        Matrix<double>intermediate(_numRows, _numCols*2);
+        double determinant = det();
+        if (determinant == 0 || _numCols != _numRows)
+          throw std::invalid_argument("Matrix is not invertible.");
+
+        if(_numCols == 2){
+          product(0,0) = _matrix[1][1]/determinant;
+          product(1,0) = -1*_matrix[1][0]/determinant;
+          product(0,1) = -1*_matrix[0][1]/determinant;
+          product(1,1) = _matrix[0][0]/determinant;
+        }
+        else{
+          intermediate = combinerows(identity(_numCols));
+          intermediate.rref();
+          for(int i=0; i<_numRows; i++){
+            for(int j=0; j<_numCols; j++){
+              product(i,j) = intermediate(i,j+_numCols);
+            }
+          }
+        }
+        return product;
+      }
 //          for(int i = 0; i < _numCols; i++){
 //            for(int j = 0; j < _numRows; j++){
 //              double intermediate1 = 1;
@@ -338,38 +374,83 @@ private:
 
       return m;
     }
+
+    int rank(){
+      ref();
+      int i = 0;
+      for (int j = 0; j < _numCols; j++) {
+          if (_matrix[i][j] != 0) {
+              i++;
+              j = - 1;
+          }
+          if (j == _numCols - 1 || i == _numRows)
+              break;
+      }
+      return i;
+  }
+
+    void ref(){
+      int swapWith; //stores index of row x > i, where m[x][j] != 0, to switch with current row where m[i][j] == 0.
+      int j = 0;
+      for (int i = 0; i < _numRows; ++i) {
+          if ( j >= _numCols)
+              return;
+
+          while (_matrix[i][j] == 0) {
+              //if column is all zeros, move to next column
+              if (_allZeros(i, j, swapWith)) {
+                  j++;
+                  if (j >= _numCols)
+                      return;
+                  continue;
+              }
+              //if element on current row is 0, attempt interchange with row > current row where element in column j is non-zero.
+              if (swapWith != -1)
+                  _matrix[i].swap(_matrix[swapWith]);
+              else {
+                  j++;
+                  if (j >= _numCols)
+                      return;
+              }
+          }
+
+          scaleRow(i, j);
+          _refSubtractRows(i, j);
+          j++;
+
+      }
+  }
     
     //reduced row echelon form
     void rref() {
       int swapWith; //stores index of row x > i, where m[x][j] != 0, to switch with current row where m[i][j] == 0.
-      for (int j = 0; j < _numCols; ++j) {
-          for (int i = 0; i < _numRows; ++i) {
-              if ( j >= _numCols)
-                  return;
+      int j = 0;
+      for (int i = 0; i < _numRows; ++i) {
+          if ( j >= _numCols)
+              return;
 
-              while (_matrix[i][j] == 0) {
-                  //if column is all zeros, move to next column
-                  if (_allZeros(i, j, swapWith)) {
-                      j++;
-                      if (j >= _numCols)
-                          return;
-                      continue;
-                  }
-                  //if element on current row is 0, attempt interchange with row > current row where element in column j is non-zero.
-                  if (swapWith != -1)
-                      _matrix[i].swap(_matrix[swapWith]);
-                  else {
-                      j++;
-                      if (j >= _numCols)
-                          return;
-                  }
+          while (_matrix[i][j] == 0) {
+              //if column is all zeros, move to next column
+              if (_allZeros(i, j, swapWith)) {
+                  j++;
+                  if (j >= _numCols)
+                      return;
+                  continue;
               }
-
-              scaleRow(i, j);
-              subtractRows(i, j);
-              j++;
-
+              //if element on current row is 0, attempt interchange with row > current row where element in column j is non-zero.
+              if (swapWith != -1)
+                  _matrix[i].swap(_matrix[swapWith]);
+              else {
+                  j++;
+                  if (j >= _numCols)
+                      return;
+              }
           }
+
+          scaleRow(i, j);
+          subtractRows(i, j);
+          j++;
+
       }
   }
 
@@ -412,6 +493,16 @@ private:
           }
       }
   }
+
+  void _refSubtractRows(int row, int col) {
+    double scalar;
+    for (int i = row + 1; i < _numRows; ++i) {
+        scalar = _matrix[i][col];
+        for (int j = 0; j < _numCols; ++j) {
+            _matrix[i][j] = _matrix[i][j] - _matrix[row][j] * scalar;
+        }
+    }
+}
 
     public:
 
