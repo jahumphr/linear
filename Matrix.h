@@ -226,23 +226,6 @@ private:
         }
         return product;
       }
-//          for(int i = 0; i < _numCols; i++){
-//            for(int j = 0; j < _numRows; j++){
-//              double intermediate1 = 1;
-//              double intermediate2 = 1;
-//              for(int k=1; k<_numCols; k++){
-//                intermediate1 *= _matrix[(i+k)%_numRows][(j+k)%_numCols];
-//                intermediate2 *= _matrix[(i+((k+1)%(_numCols-1))+1)%_numCols][(j+((k+2)%(_numCols-1))+1)%_numCols];
-//              if((i+j)%2==0)
-//                product(i,j) = (intermediate1-intermediate2)/determinant;
-//              else
-//                product(i,j) = -1*(intermediate1-intermediate2)/determinant;
-//           }
-//          }
-//         }
-//        }
-//        return product;
-//      }
     /**
       Returns the sum of two matrices, throws error if matrices are of different dimensions.
     */
