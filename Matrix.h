@@ -20,6 +20,7 @@ template<typename T>
         
     }
 
+    /*Checks equality of two matrices.*/
     bool operator==(const Matrix& other) const{
       if(_numRows != other._numRows || _numCols != other._numCols)
         return false;
@@ -202,7 +203,7 @@ private:
       }
 
      //return the inverse of a matrix
-      Matrix<double> Inverse(){
+      Matrix<double> inverse(){
         Matrix<double>product(_numRows, _numCols);
         Matrix<double>intermediate(_numRows, _numCols*2);
         double determinant = det();
@@ -261,7 +262,7 @@ private:
     }
 
     /**
-      Returns the product of two matrices (are we doing auto transpose later or nah? Also might need to throw error if dimensions don't work, ie. 2x2 * 2x3 ok but 2x2 * 3x2 not ok.
+      Returns the product of two matrices
     */
     Matrix<T> operator*(const Matrix& other){
       Matrix<T> product(_numRows, other._numCols);
@@ -278,9 +279,6 @@ private:
     /* SCALAR OPERATIONS */
 
     //num + matrix
-    /**
-      Don't think we can add scalars to matrices like this... if we had to the scalar would be added to the matrix after being multiplied by the identity matrix (same goes for subtraction)
-    */
     friend Matrix<T> operator+(const T num, Matrix<T> m){
 
       for (int i = 0; i < m._numRows; ++i){
@@ -358,6 +356,7 @@ private:
       return m;
     }
 
+    //returns matrix rank
     int rank(){
       ref();
       int i = 0;
@@ -372,6 +371,7 @@ private:
       return i;
   }
 
+  //returns row echelon form
     void ref(){
       int swapWith; //stores index of row x > i, where m[x][j] != 0, to switch with current row where m[i][j] == 0.
       int j = 0;
