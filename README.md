@@ -109,7 +109,7 @@ Output:
 Sets matrix1 = matrix2.
 
 
-*
+/*
 
 When used with a matrix and int or double, performs scalar multiplication:
 
