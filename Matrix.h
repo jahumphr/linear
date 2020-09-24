@@ -1,3 +1,7 @@
+/*Linear Algebra Library
+Joshua Humphries*/
+
+
 #include <stdlib.h>
 #include <vector>
 #include <stdexcept>
@@ -33,6 +37,7 @@ template<typename T>
       return true;
     }
 
+    /*Operator overload, allows for setting one matrix equal to another.*/
     void operator=(std::string s){
         _matrix.push_back(std::vector<double>(0));
         std::string s2double = "";
@@ -62,6 +67,7 @@ template<typename T>
         _numCols = _matrix[0].size();
     }
 
+    /*Returns item at row, col in matrix.*/
     T& at(const int row, const int col){
       if (row < 0 || row >= _numRows)
         throw std::invalid_argument( "Invalid row number" );
@@ -111,6 +117,7 @@ template<typename T>
   //      }
     }
 
+    /*Takes a size argument and returns an identity matrix of size.*/
     Matrix<T> identity(int size){
       Matrix<T> product(size, size);
       for (int i=0; i<size; i++){
@@ -118,8 +125,9 @@ template<typename T>
       }
       return product;
     }
-    //insert column at position. If no position entered, inserts as last column.
-    //Worst case runtime is quadratic here.
+
+    /*insert column at position. If no position entered, inserts as last column.
+    Worst case runtime is quadratic here.*/
     void insertCol(std::vector<T> newCol, int pos = -1){
       if (pos < 0 || pos > _numCols)
         throw std::invalid_argument("Invalid column position");
@@ -138,21 +146,22 @@ template<typename T>
       }
     }
 
+    /*Returns the transpose of a matrix.*/
     Matrix<T> Transpose(){
-      Matrix<T> product(_numCols, _numRows);
+      Matrix<T> result(_numCols, _numRows);
       for(int i=0; i<_numRows; i++){
         for(int j=0; j<_numCols; j++){
-          product(j,i) = _matrix[i][j];
+          result(j,i) = _matrix[i][j];
         }
       }
-      return product;
+      return result;
     }
 
-    //return the determinant of a matrix
+   /* Return the determinant of a matrix. Matrix must be square.*/
     double det(){
       if (_numCols != _numRows)
-        throw std::invalid_argument("Cannot find the determinant of a non-square matrix.");
-      return _det(_matrix);
+        throw std::invalid_argument("Cannot compute the determinant of a non-square matrix.");
+      return _det(_matrix); //helper function defined below
     }
 
 
@@ -186,8 +195,8 @@ private:
     }
 
  public:
-
-      Matrix<double> combinerows(const Matrix& other){
+      /*Join two matrices side-by-side. Calling object will be right side, and argument will be left side.*/
+      Matrix<double> combineCols(const Matrix& other){
         Matrix<double>product(_numRows,_numCols+other._numCols);
         for(int i=0; i<_numRows; i++){
           for(int j=0; j<_numCols; j++){
@@ -217,7 +226,7 @@ private:
           product(1,1) = _matrix[0][0]/determinant;
         }
         else{
-          intermediate = combinerows(identity(_numCols));
+          intermediate = combineCols(identity(_numCols));
           intermediate.rref();
           for(int i=0; i<_numRows; i++){
             for(int j=0; j<_numCols; j++){
@@ -457,6 +466,7 @@ private:
       return allZero;
     }
 
+    //rref and ref helper function. Scales a row by pivot to make pivot equal to 1
     void scaleRow(int row, int col){
       double scalar = (double)_matrix[row][col];
       
@@ -465,6 +475,7 @@ private:
 
     }
 
+    //helper function for rref to subtract rows above and below pivot to make them zero
     void subtractRows(int row, int col) {
       double scalar;
       for (int i = 0; i < _numRows; ++i) {
@@ -477,6 +488,7 @@ private:
       }
   }
 
+  //helper function for ref to subtract rows below pivot to make them zero
   void _refSubtractRows(int row, int col) {
     double scalar;
     for (int i = row + 1; i < _numRows; ++i) {
@@ -488,9 +500,8 @@ private:
 }
 
     public:
-
+    //prints matrix
     void display() const{
-      //display
       for(int i=0; i<_numRows; i++){
         std::cout << "( ";
 
@@ -506,7 +517,7 @@ private:
     }
 
   private:
-    std::vector<std::vector<T>> _matrix;
+    std::vector<std::vector<T>> _matrix; //stores matrix
     int _numRows, _numCols;
 
 
